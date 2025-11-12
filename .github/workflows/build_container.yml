@@ -5,7 +5,6 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  GHCR_NAMESPACE: shrujanus
 
 jobs:
   build-and-push:
@@ -34,4 +33,4 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           push: true
-          tags: ghcr.io/${{ env.GHCR_NAMESPACE }}/ros2_ws:latest
+          tags: ghcr.io/${{ github.actor }}/ros2_ws:latest
