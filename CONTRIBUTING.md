@@ -116,19 +116,12 @@ colcon test-result --verbose
 
 If you add new functionality, include or update unit tests where possible.
 
-### Security
-
-If you discover a security vulnerability, please do not open a public issue. Instead contact the maintainers privately or follow any `SECURITY.md` guidance if present.
-
 ### Licensing and copyright
 
 By contributing, you agree that your contributions will be licensed under this repository's license (see `LICENSE`). When in doubt, keep changes minimal and discuss large contributions in an issue first.
 
 ### Thank you
 
-Thanks for helping make this project better! We appreciate every contribution — large or small.
+Thanks for helping make this project better! We appreciate every contribution :) large or small.
 
----
-
-If you'd like, we can also add issue and PR templates, a `CODE_OF_CONDUCT.md`, and a `SECURITY.md` to improve contributor experience — suggest which and I can add them next.
 

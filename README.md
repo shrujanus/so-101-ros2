@@ -1,25 +1,18 @@
-# SO-101 ROS2 — Open-Source General Purpose Manipulator  
-### Natural Language → Vision-Language-Action (VLA) → MoveIt2 → Robot Execution
-
----
-
 ## 🌍 Inspiration
 
-Growing up in India, I often saw plastic bottles, cans, wrappers, and recyclables littering the streets. It always felt like a **solvable problem** — if only technology could lend a hand (literally).
+Growing up in India, I often saw plastic bottles, cans, wrappers, and recyclables littering the streets. It always felt like a **solvable problem**, what if only technology could lend a hand (literally)
 
 This project was born from that simple idea:  
-> **What if a robotic arm could autonomously identify and pick up recyclables — cleaning our environment, one object at a time?**
+> **What if a robotic arm could autonomously identify and pick up recyclables, cleaning our environment, one object at a time?**
 
-SO-101 ROS2 is a step toward that future: an **open-source, modular robotic manipulation platform** that combines **natural language understanding**, **vision-language-action models**, and **robust motion planning** to enable real-world pick-and-place tasks.
-
----
+SO-101 ROS2 is a step toward that: by using an **open-source arm**  we then combines **natural language understanding**, **vision-language-action modes**, and **robust motion planning** to enable real-world pick-and-place tasks
 
 ## 🚀 Overview
 
-**SO-101 ROS2** is a fully open-source framework for building **general-purpose robotic manipulators** using the **SO-101 robotic arm**. It enables **natural language-driven pick-and-place** operations via a complete software stack:
+**SO-101 ROS2** is an experiment for building **general-purpose robotic manipulators** using the **SO-101 robotic arm**. It enables **natural language-driven pick-and-place** operations via a complete software stack:
 
 > **Example Command:**  
-> _“Pick up all recyclables and place them in the blue recycling bin.”_
+> _“Pick up all recyclables and place them in the blue recycling bin”_
 
 The system bridges the full pipeline:  
 **Language → Perception → Action Planning → Hardware Execution**
@@ -28,9 +21,7 @@ The system bridges the full pipeline:
 Provide developers with a **plug-and-play platform** to:
 - Fine-tune **Vision-Language-Action (VLA)** models
 - Control **any ROS2-compatible robotic arm** via `ros2_control`
-- Perform **robust pick-and-place** tasks in simulation and reality
-
----
+- Perform **robust pick-and-place** tasks in simulation and reality (sim-to-real)
 
 ## 🧠 System Architecture
 
@@ -73,8 +64,6 @@ graph TD
 | `scripts/` | Training and fine-tuning pipeline for the Vision-Language model (using **PyTorch** and **LeRobot**) |
 | `docs/` | Documentation, diagrams, and setup guides for developers and contributors |
 
----
-
 ## 🧩 Tech Stack
 
 - **ROS2 Humble** — Core robotics framework  
@@ -82,25 +71,16 @@ graph TD
 - **PyTorch + LeRobot** — Vision-Language training & fine-tuning  
 - **Gazebo / MuJoCo Sim** — Physics simulation and visualization  
 
----
-
-## 🤝 Contributing
+## 🤝 [Contributing](CONTRIBUTING.md)
 
 Contributions are welcome! Whether you want to help with ROS2 development, dataset collection, or model training — feel free to open an issue or a PR.  
 
-> Let’s build robots that make the world cleaner, one recyclable at a time ♻️
-
----
 
 ## 📜 License
 
 This project is open-source and licensed under the [Apache License](LICENSE).
 
----
-
 ## ⭐ Acknowledgements
 
 This project builds on the shoulders of open-source giants —  
 **MoveIt2**, **ROS2**, **PyTorch**, **LeRobot**, and the amazing open-source robotics community.
-
----
