@@ -5,7 +5,8 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  
+  GHCR_NAMESPACE: shrujanus
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
