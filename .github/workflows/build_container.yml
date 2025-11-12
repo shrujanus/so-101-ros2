@@ -1,21 +1,21 @@
 name: Build Docker Image
 
 on:
-  workflow_dispatch:  # Runs only when manually triggered
+  workflow_dispatch: 
+
+env:
+  DOCKER_BUILDKIT: 1
+  GHCR_NAMESPACE: so101
 
 jobs:
   build-and-push:
-    name: Build and Push to GHCR
     runs-on: ubuntu-latest
-
+    
     permissions:
       contents: read
-      packages: write  # Needed for GHCR push
-      id-token: write  # Required for OIDC authentication
-
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}  # e.g. user/repo
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -24,14 +24,15 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ./docker
-
-      - name: Push Docker image to GHCR
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          platforms: linux/arm64
+          tags: ghcr.io/${{ env.GHCR_NAMESPACE }}/ros2-workspace:latestest
