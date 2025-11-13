@@ -5,7 +5,7 @@ Growing up in India, I often saw plastic bottles, cans, wrappers, and recyclable
 This project was born from that simple idea:  
 > **What if a robotic arm could autonomously identify and pick up recyclables, cleaning our environment, one object at a time?**
 
-SO-101 ROS2 is a step toward that: by using an **open-source arm**  we then combines **natural language understanding**, **vision-language-action modes**, and **robust motion planning** to enable real-world pick-and-place tasks
+lang2pick is a step toward that: by using an **open-source arm (SO-101)**  we then combines **natural language understanding**, **vision-language-action modes**, and **motion planning** to enable real-world pick-and-place tasks
 
 ## 🚀 Overview
 
