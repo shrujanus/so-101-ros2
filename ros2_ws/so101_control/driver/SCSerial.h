@@ -44,6 +44,7 @@ protected:
   struct termios curopt; // fd cur opt
   unsigned char txBuf[255];
   int txBufLen;
+  speed_t get_baud_constant(int baudRate);
 };
 
 #endif

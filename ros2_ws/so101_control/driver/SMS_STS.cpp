@@ -6,6 +6,8 @@
  */
 
 #include "SMS_STS.h"
+#include <iostream>
+#include <stdexcept>
 
 SMS_STS::SMS_STS() { End = 0; }
 
@@ -175,13 +177,20 @@ int SMS_STS::CalibrationOfs(u8 ID) {
 }
 
 int SMS_STS::FeedBack(int ID) {
-  int nLen = Read(ID, SMS_STS_PRESENT_POSITION_L, Mem, sizeof(Mem));
-  if (nLen != sizeof(Mem)) {
+  try {
+    int nLen = Read(ID, SMS_STS_PRESENT_POSITION_L, Mem, sizeof(Mem));
+    if (nLen != sizeof(Mem)) {
+      Err = 1;
+      std::cerr << "Error of return length: " << nLen << std::endl;
+      return -1;
+    }
+    Err = 0;
+    return nLen;
+  } catch (const std::exception &e) {
+    std::cerr << "Exception in FeedBack: " << e.what() << std::endl;
     Err = 1;
     return -1;
   }
-  Err = 0;
-  return nLen;
 }
 
 int SMS_STS::ReadPos(int ID) {

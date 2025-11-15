@@ -5,7 +5,9 @@
  * 作者:
  */
 #include "SCS.h"
+#include <iostream>
 #include <stddef.h>
+#include <stdexcept>
 #include <stdio.h>
 #include <string.h>
 
@@ -159,34 +161,43 @@ int SCS::writeWord(u8 ID, u8 MemAddr, u16 wDat) {
 // 读指令
 // 舵机ID，MemAddr内存表地址，返回数据nData，数据长度nLen
 int SCS::Read(u8 ID, u8 MemAddr, u8 *nData, u8 nLen) {
-  rFlushSCS();
-  writeBuf(ID, MemAddr, &nLen, 1, INST_READ);
-  wFlushSCS();
+  try {
+    rFlushSCS();
+    writeBuf(ID, MemAddr, &nLen, 1, INST_READ);
+    wFlushSCS();
 
-  u8 bBuf[255];
-  u8 i;
-  u8 calSum = 0;
-  int Size = readSCS(bBuf, nLen + 6);
-  // printf("nLen+6 = %d, Size = %d\n", nLen+6, Size);
-  if (Size != (nLen + 6)) {
+    u8 bBuf[255];
+    u8 i;
+    u8 calSum = 0;
+    int Size = readSCS(bBuf, nLen + 6);
+    // printf("nLen+6 = %d, Size = %d\n", nLen+6, Size);
+    if (Size != (nLen + 6)) {
+      std::cerr << "Exception in Read: " << Size << std::endl;
+      return 0;
+    }
+    // for(i=0; i<Size; i++){
+    // printf("%x\n", bBuf[i]);
+    //}
+    if (bBuf[0] != 0xff || bBuf[1] != 0xff) {
+      std::cerr << "Exception in Read: Invalid header bytes" << std::endl;
+      return 0;
+    }
+    for (i = 2; i < (Size - 1); i++) {
+      std::cerr << "Exception in Read: Invalid checksum" << std::endl;
+      calSum += bBuf[i];
+    }
+    calSum = ~calSum;
+    if (calSum != bBuf[Size - 1]) {
+      std::cerr << "Exception in Read: Checksum mismatch" << std::endl;
+      return 0;
+    }
+    memcpy(nData, bBuf + 5, nLen);
+    Error = bBuf[4];
+    return nLen;
+  } catch (std::exception &e) {
+    std::cerr << "Exception in Read: " << e.what() << std::endl;
     return 0;
   }
-  // for(i=0; i<Size; i++){
-  // printf("%x\n", bBuf[i]);
-  //}
-  if (bBuf[0] != 0xff || bBuf[1] != 0xff) {
-    return 0;
-  }
-  for (i = 2; i < (Size - 1); i++) {
-    calSum += bBuf[i];
-  }
-  calSum = ~calSum;
-  if (calSum != bBuf[Size - 1]) {
-    return 0;
-  }
-  memcpy(nData, bBuf + 5, nLen);
-  Error = bBuf[4];
-  return nLen;
 }
 
 // 读1字节，超时返回-1

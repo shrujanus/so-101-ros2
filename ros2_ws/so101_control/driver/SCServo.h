@@ -9,7 +9,5 @@
 #define _SCSERVO_H
 
 #include "SCSCL.h"
-#include "SMSBL.h"
-#include "SMSCL.h"
 #include "SMS_STS.h"
 #endif
