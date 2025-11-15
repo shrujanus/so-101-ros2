@@ -146,31 +146,23 @@ int SCSerial::readSCS(unsigned char* nDat, int nLen)
   // 使用select实现串口的多路通信
   while (1)
   {
-    try
+    fs_sel = select(fd + 1, &fs_read, NULL, NULL, &time);
+    if (fs_sel)
     {
-      fs_sel = select(fd + 1, &fs_read, NULL, NULL, &time);
-      if (fs_sel)
-      {
-        rvLen += read(fd, nDat + rvLen, nLen - rvLen);
+      rvLen += read(fd, nDat + rvLen, nLen - rvLen);
 
-        if (rvLen < nLen)
-        {
-          continue;
-        }
-        else
-        {
-          return rvLen;
-        }
+      if (rvLen < nLen)
+      {
+        continue;
       }
       else
       {
-        // printf("serial read fd read return 0\n");
         return rvLen;
       }
     }
-    catch (const std::exception& e)
+    else
     {
-      std::cerr << "Exception in readSCS: " << e.what() << std::endl;
+      // printf("serial read fd read return 0\n");
       return rvLen;
     }
   }

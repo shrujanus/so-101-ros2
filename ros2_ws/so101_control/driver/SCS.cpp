@@ -201,7 +201,7 @@ int SCS::Read(u8 ID, u8 MemAddr, u8* nData, u8 nLen)
     // printf("nLen+6 = %d, Size = %d\n", nLen+6, Size);
     if (Size != (nLen + 6))
     {
-      std::cerr << "Exception in Read: " << Size << std::endl;
+      // std::cerr << "Exception in Read: " << Size << std::endl;
       return 0;
     }
     // for(i=0; i<Size; i++){
