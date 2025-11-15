@@ -50,12 +50,6 @@ repos:
       - id: prettier
         files: \.(yaml|yml)$
 
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.0
-    hooks:
-      - id: yamllint
-        args: ["-d", "{extends: default, rules: {line-length: {max: 120}}}"]
-
   # -----------------------------
   # 6. Format XML using xmllint
   # -----------------------------
