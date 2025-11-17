@@ -1,7 +1,7 @@
 name: Build Docker Image
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
 
 env:
   DOCKER_BUILDKIT: 1
@@ -9,7 +9,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: read
       packages: write

@@ -1,6 +1,6 @@
-<library path="libso101_control">
-  <class name="so101_control/STS3215Hardware"
-         type="so101_control::STS3215Hardware"
+<library path="so101_control">
+  <class name="so101_control/so101_hardware_interface"
+         type="so101_control::so101_hardware_interface"
          base_class_type="hardware_interface::SystemInterface">
     <description>
       FEETECH STS3215 servo hardware interface for ros2_control

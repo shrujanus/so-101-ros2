@@ -6,57 +6,65 @@
  */
 
 #include "SCSerial.h"
+
 #include <iostream>
 
-SCSerial::SCSerial() {
+SCSerial::SCSerial()
+{
   IOTimeOut = 100;
   fd = -1;
   txBufLen = 0;
 }
 
-SCSerial::SCSerial(u8 End) : SCS(End) {
+SCSerial::SCSerial(u8 End) : SCS(End)
+{
   IOTimeOut = 100;
   fd = -1;
   txBufLen = 0;
 }
 
-SCSerial::SCSerial(u8 End, u8 Level) : SCS(End, Level) {
+SCSerial::SCSerial(u8 End, u8 Level) : SCS(End, Level)
+{
   IOTimeOut = 100;
   fd = -1;
   txBufLen = 0;
 }
 
-speed_t SCSerial::get_baud_constant(int baudRate) {
-  switch (baudRate) {
-  case 9600:
-    return B9600;
-  case 19200:
-    return B19200;
-  case 38400:
-    return B38400;
-  case 57600:
-    return B57600;
-  case 115200:
-    return B115200;
-  case 230400:
-    return B230400;
-  case 460800:
-    return B460800;
-  case 500000:
-    return B500000;
-  case 576000:
-    return B576000;
-  case 921600:
-    return B921600;
-  case 1000000:
-    return B1000000;
-  default:
-    return B0;
+speed_t SCSerial::get_baud_constant(int baudRate)
+{
+  switch (baudRate)
+  {
+    case 9600:
+      return B9600;
+    case 19200:
+      return B19200;
+    case 38400:
+      return B38400;
+    case 57600:
+      return B57600;
+    case 115200:
+      return B115200;
+    case 230400:
+      return B230400;
+    case 460800:
+      return B460800;
+    case 500000:
+      return B500000;
+    case 576000:
+      return B576000;
+    case 921600:
+      return B921600;
+    case 1000000:
+      return B1000000;
+    default:
+      return B0;
   }
 }
 
-bool SCSerial::begin(int baudRate, const char *serialPort) {
-  if (fd != -1) {
+bool SCSerial::begin(int baudRate, const char* serialPort)
+{
+  if (fd != -1)
+  {
     close(fd);
     fd = -1;
   }
@@ -64,7 +72,8 @@ bool SCSerial::begin(int baudRate, const char *serialPort) {
   if (serialPort == NULL)
     return false;
   fd = open(serialPort, O_RDWR | O_NOCTTY);
-  if (fd < 0) {
+  if (fd < 0)
+  {
     perror("open:");
     return false;
   }
@@ -72,7 +81,8 @@ bool SCSerial::begin(int baudRate, const char *serialPort) {
   fcntl(fd, F_SETFL, FNDELAY);
   speed_t CR_BAUDRATE = get_baud_constant(baudRate);
   memset(&curopt, 0, sizeof(curopt));
-  if (tcgetattr(fd, &curopt) != 0) {
+  if (tcgetattr(fd, &curopt) != 0)
+  {
     perror("tcgetattr:");
     close(fd);
     return false;
@@ -93,10 +103,11 @@ bool SCSerial::begin(int baudRate, const char *serialPort) {
   curopt.c_iflag = 0;
   curopt.c_oflag = 0;
 
-  curopt.c_cc[VMIN] = 6;  // VMIN = 1: Block until at least 1 byte is available
-  curopt.c_cc[VTIME] = 0; // VTIME = 0: No inter-character timer
+  curopt.c_cc[VMIN] = 6;   // VMIN = 1: Block until at least 1 byte is available
+  curopt.c_cc[VTIME] = 0;  // VTIME = 0: No inter-character timer
 
-  if (tcsetattr(fd, TCSANOW, &curopt) != 0) {
+  if (tcsetattr(fd, TCSANOW, &curopt) != 0)
+  {
     perror("tcsetattr:");
     close(fd);
     return false;
@@ -104,8 +115,10 @@ bool SCSerial::begin(int baudRate, const char *serialPort) {
   return true;
 }
 
-int SCSerial::setBaudRate(int baudRate) {
-  if (fd == -1) {
+int SCSerial::setBaudRate(int baudRate)
+{
+  if (fd == -1)
+  {
     return -1;
   }
   tcgetattr(fd, &orgopt);
@@ -116,7 +129,8 @@ int SCSerial::setBaudRate(int baudRate) {
   return 1;
 }
 
-int SCSerial::readSCS(unsigned char *nDat, int nLen) {
+int SCSerial::readSCS(unsigned char* nDat, int nLen)
+{
   int fs_sel;
   fd_set fs_read;
   int rvLen = 0;
@@ -130,51 +144,61 @@ int SCSerial::readSCS(unsigned char *nDat, int nLen) {
   time.tv_usec = IOTimeOut * 1000;
 
   // 使用select实现串口的多路通信
-  while (1) {
-    try {
-      fs_sel = select(fd + 1, &fs_read, NULL, NULL, &time);
-      std::cout << "fs_sel: " << fs_sel << std::endl;
-      if (fs_sel) {
-        rvLen += read(fd, nDat + rvLen, nLen - rvLen);
+  while (1)
+  {
+    fs_sel = select(fd + 1, &fs_read, NULL, NULL, &time);
+    if (fs_sel)
+    {
+      rvLen += read(fd, nDat + rvLen, nLen - rvLen);
 
-        if (rvLen < nLen) {
-          continue;
-        } else {
-          return rvLen;
-        }
-      } else {
-        // printf("serial read fd read return 0\n");
+      if (rvLen < nLen)
+      {
+        continue;
+      }
+      else
+      {
         return rvLen;
       }
-    } catch (const std::exception &e) {
-      std::cerr << "Exception in readSCS: " << e.what() << std::endl;
+    }
+    else
+    {
+      // printf("serial read fd read return 0\n");
       return rvLen;
     }
   }
 }
 
-int SCSerial::writeSCS(unsigned char *nDat, int nLen) {
-  while (nLen--) {
+int SCSerial::writeSCS(unsigned char* nDat, int nLen)
+{
+  while (nLen--)
+  {
     txBuf[txBufLen++] = *nDat++;
   }
   return txBufLen;
 }
 
-int SCSerial::writeSCS(unsigned char bDat) {
+int SCSerial::writeSCS(unsigned char bDat)
+{
   txBuf[txBufLen++] = bDat;
   return txBufLen;
 }
 
-void SCSerial::rFlushSCS() { tcflush(fd, TCIFLUSH); }
+void SCSerial::rFlushSCS()
+{
+  tcflush(fd, TCIFLUSH);
+}
 
-void SCSerial::wFlushSCS() {
-  if (txBufLen) {
+void SCSerial::wFlushSCS()
+{
+  if (txBufLen)
+  {
     txBufLen = write(fd, txBuf, txBufLen);
     txBufLen = 0;
   }
 }
 
-void SCSerial::end() {
+void SCSerial::end()
+{
   fd = -1;
   close(fd);
 }

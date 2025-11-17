@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="so101_ros2_control" params="name use_mock_hardware">
+
+    <ros2_control name="${name}" type="system">
+      <xacro:unless value="${use_mock_hardware}">
+        <hardware>
+            <plugin>so101_control/so101_hardware_interface</plugin>
+            <param name="usb_port">/dev/ttyACM0</param>
+            <param name="baud_rate">1000000</param>
+            <param name="control_mode">0</param>
+        </hardware>
+      </xacro:unless>
+      <xacro:if value="${use_mock_hardware}">
+        <hardware>
+          <plugin>mock_components/GenericSystem</plugin>
+        </hardware>
+      </xacro:if>
+
+        <joint name="shoulder_pan">
+            <param name="id">1</param>
+            <param name="type">position</param>
+            <param name="position_offset">-1543</param>
+            <param name="min_range">674</param>
+            <param name="max_range">3383</param>
+            <param name="min_angle">-1.91986</param>
+            <param name="max_angle">1.91986</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+        </joint>
+
+        <joint name="shoulder_lift">
+            <param name="id">2</param>
+            <param name="type">position</param>
+            <param name="position_offset">1942</param>
+            <param name="min_range">845</param>
+            <param name="max_range">3232</param>
+            <param name="min_angle">-1.74533</param>
+            <param name="max_angle">1.745336</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+
+        </joint>
+
+        <joint name="elbow_flex">
+            <param name="id">3</param>
+            <param name="type">position</param>
+            <param name="position_offset">1052</param>
+            <param name="min_range">869</param>
+            <param name="max_range">3113</param>
+            <param name="min_angle">-1.69</param>
+            <param name="max_angle">1.69</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+
+        </joint>
+
+        <joint name="wrist_flex">
+            <param name="id">4</param>
+            <param name="type">position</param>
+            <param name="position_offset">1954</param>
+            <param name="min_range">819</param>
+            <param name="max_range">3202</param>
+            <param name="min_angle">-1.65806</param>
+            <param name="max_angle">1.65806</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+
+        </joint>
+
+        <joint name="wrist_roll">
+            <param name="id">5</param>
+            <param name="type">position</param>
+            <param name="position_offset">1881</param>
+            <param name="min_range">0</param>
+            <param name="max_range">4095</param>
+            <param name="min_angle">-2.74385</param>
+            <param name="max_angle">2.84121</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+
+        </joint>
+
+        <joint name="gripper">
+            <param name="id">6</param>
+            <param name="type">position</param>
+            <param name="position_offset">-2035</param>
+            <param name="min_range">2037</param>
+            <param name="max_range">3508</param>
+            <param name="min_angle">-0.174533</param>
+            <param name="max_angle">1.74533</param>
+            <command_interface name="position"/>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+            <state_interface name="effort"/>
+
+        </joint>
+
+
+    </ros2_control> 
+
+    </xacro:macro>
+
+
+</robot>

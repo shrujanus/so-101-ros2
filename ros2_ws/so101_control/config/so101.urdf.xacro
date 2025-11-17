@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="so101">
+  <xacro:arg name="use_mock_hardware" default="false" />
+
+  <xacro:include filename="$(find so101_description)/urdf/so101_description.urdf.xacro" />
+
+  <xacro:so101_new_calib/>
+
+
+  <xacro:include filename="$(find so101_control)/config/so101.ros2_control.xacro" />
+
+  <xacro:so101_ros2_control
+    name="so101" use_mock_hardware="$(arg use_mock_hardware)"/>
+
+</robot>

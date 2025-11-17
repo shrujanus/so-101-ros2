@@ -3,18 +3,18 @@ repos:
   # 1. Format C++ using clang-format
   # -----------------------------
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.6  # Change based on your clang-format version (run clang-format --version)
+    rev: v21.1.5
     hooks:
       - id: clang-format
         name: clang-format C/C++
         files: \.(cpp|hpp|cc|hh|c|h)$
-        args: ["-style=file"]  # Reads .clang-format config if present
+        args: ["-style=file"]
 
   # -----------------------------
   # 2. Format Python using black
   # -----------------------------
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 25.11.0
     hooks:
       - id: black
         language_version: python3
@@ -23,7 +23,7 @@ repos:
   # 3. Lint Python with flake8
   # -----------------------------
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
         additional_dependencies:
@@ -35,8 +35,29 @@ repos:
   # 4. Prevent committing large files
   # -----------------------------
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: check-added-large-files
         args: ["--maxkb=5000"]
+
+  # -----------------------------
+  # 5. Lint YAML
+  # -----------------------------
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0
+    hooks:
+      - id: prettier
+        files: \.(yaml|yml)$
+
+  # -----------------------------
+  # 6. Format XML using xmllint
+  # -----------------------------
+  - repo: local
+    hooks:
+      - id: format-xml
+        name: Format XML
+        entry: xmllint --format
+        language: system
+        types: [xml]
+        files: \.xml$

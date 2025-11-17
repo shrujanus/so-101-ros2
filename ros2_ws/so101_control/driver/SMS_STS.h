@@ -62,51 +62,46 @@
 
 #include "SCSerial.h"
 
-class SMS_STS : public SCSerial {
+class SMS_STS : public SCSerial
+{
 public:
   SMS_STS();
   SMS_STS(u8 End);
   SMS_STS(u8 End, u8 Level);
-  virtual int
-  WritePosEx(u8 ID, s16 Position, u16 Speed,
-             u8 ACC = 0); // Mode 0: Ordinary write single servo position
-  virtual int
-  RegWritePosEx(u8 ID, s16 Position, u16 Speed,
-                u8 ACC = 0); // Mode 0: Async write single servo position
-                             // (RegWriteAction takes effect)
-  virtual void
-  SyncWritePosEx(u8 ID[], u8 IDN, s16 Position[], u16 Speed[],
-                 u8 ACC[]); // Mode 0: Sync write multiple servo positions
-  virtual int Mode(u8 ID, u8 mode); // Set mode: 0 (servo), 1 (wheel; closed
-                                    // loop) or 2 (wheel; open loop)
+  virtual int WritePosEx(u8 ID, s16 Position, u16 Speed,
+                         u8 ACC = 0);  // Mode 0: Ordinary write single servo position
+  virtual int RegWritePosEx(u8 ID, s16 Position, u16 Speed,
+                            u8 ACC = 0);  // Mode 0: Async write single servo position
+                                          // (RegWriteAction takes effect)
+  virtual void SyncWritePosEx(u8 ID[], u8 IDN, s16 Position[], u16 Speed[],
+                              u8 ACC[]);  // Mode 0: Sync write multiple servo positions
+  virtual int Mode(u8 ID, u8 mode);       // Set mode: 0 (servo), 1 (wheel; closed
+                                          // loop) or 2 (wheel; open loop)
   virtual int WriteSpe(u8 ID, s16 Speed,
-                       u8 ACC = 0); // Mode 1: Ordinary write single servo speed
+                       u8 ACC = 0);  // Mode 1: Ordinary write single servo speed
   virtual int RegWriteSpe(u8 ID, s16 Speed,
-                          u8 ACC = 0); // Mode 1: Async write single servo speed
-  virtual void
-  SyncWriteSpe(u8 ID[], u8 IDN, s16 Speed[],
-               u8 ACC[]); // Mode 1: Sync write multiple servo speeds
+                          u8 ACC = 0);  // Mode 1: Async write single servo speed
+  virtual void SyncWriteSpe(u8 ID[], u8 IDN, s16 Speed[],
+                            u8 ACC[]);  // Mode 1: Sync write multiple servo speeds
   virtual int WritePwm(u8 ID,
-                       s16 Pwm); // Mode 2: Ordinary write single servo PWM
+                       s16 Pwm);  // Mode 2: Ordinary write single servo PWM
   virtual int RegWritePwm(u8 ID,
-                          s16 Pwm); // Mode 2: Async write single servo PWM
-  virtual void
-  SyncWritePwm(u8 ID[], u8 IDN,
-               s16 Pwm[]); // Mode 2: Sync write multiple servo PWMs
-  virtual int EnableTorque(u8 ID, u8 Enable); // Enable torque
-  virtual int unLockEprom(u8 ID);             // EEPROM unlock
-  virtual int LockEprom(u8 ID);               // EEPROM lock
-  virtual int CalibrationOfs(u8 ID);          // Median calibration
-  virtual int FeedBack(int ID);               // Servo feedback information
-  virtual int ReadPos(int ID);                // Read servo position
-  virtual int ReadSpeed(int ID);              // Read servo speed
-  virtual int
-  ReadLoad(int ID); // Read PWM percentage output to the motor ([-1000, 1000] =
-                    // [100% reverse, 100% forward])
-  virtual int ReadVoltage(int ID); // Read motor voltage
-  virtual int ReadTemper(int ID);  // Read motor temperature
-  virtual int ReadMove(int ID);    // Read motion status
-  virtual int ReadCurrent(int ID); // Read motor current
+                          s16 Pwm);  // Mode 2: Async write single servo PWM
+  virtual void SyncWritePwm(u8 ID[], u8 IDN,
+                            s16 Pwm[]);        // Mode 2: Sync write multiple servo PWMs
+  virtual int EnableTorque(u8 ID, u8 Enable);  // Enable torque
+  virtual int unLockEprom(u8 ID);              // EEPROM unlock
+  virtual int LockEprom(u8 ID);                // EEPROM lock
+  virtual int CalibrationOfs(u8 ID);           // Median calibration
+  virtual int FeedBack(int ID);                // Servo feedback information
+  virtual int ReadPos(int ID);                 // Read servo position
+  virtual int ReadSpeed(int ID);               // Read servo speed
+  virtual int ReadLoad(int ID);                // Read PWM percentage output to the motor ([-1000, 1000] =
+                                               // [100% reverse, 100% forward])
+  virtual int ReadVoltage(int ID);             // Read motor voltage
+  virtual int ReadTemper(int ID);              // Read motor temperature
+  virtual int ReadMove(int ID);                // Read motion status
+  virtual int ReadCurrent(int ID);             // Read motor current
 private:
   u8 Mem[SMS_STS_PRESENT_CURRENT_H - SMS_STS_PRESENT_POSITION_L + 1];
 };

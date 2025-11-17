@@ -21,7 +21,6 @@ add_library(scservo STATIC
   driver/SCSCL.cpp
   driver/SCSerial.cpp
   driver/SMS_STS.cpp
-  driver/SMSCL.cpp
 )
 
 target_include_directories(scservo PUBLIC
@@ -83,7 +82,9 @@ install(DIRECTORY include/
   DESTINATION include
 )
 
-
+install(DIRECTORY config launch
+  DESTINATION share/${PROJECT_NAME}
+)
 
 # -------------------------------------------------------------
 # 5. Ament exports

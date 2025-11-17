@@ -1,24 +1,29 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100
-
-    arm_hardware:
-      type: so101_control/so101_hardware_interface
-      usb_port: /dev/ttyUSB0
+    update_rate: 10
+    use_sim_time: false
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    joint_trajectory_controller:
+    arm_controller:
       type: joint_trajectory_controller/JointTrajectoryController
-      joints:
-        - joint1
-        - joint2
-        - joint3
-        - joint4
-        - joint5
-        - joint6
-      command_interfaces:
-        - position
-      state_interfaces:
-        - position
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - shoulder_pan
+      - shoulder_lift
+      - elbow_flex
+      - wrist_flex
+      - wrist_roll
+      - gripper
+
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity
+
+    allow_nonzero_velocity_at_trajectory_end: false

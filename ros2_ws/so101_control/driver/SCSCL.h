@@ -57,31 +57,31 @@
 
 #include "SCSerial.h"
 
-class SCSCL : public SCSerial {
+class SCSCL : public SCSerial
+{
 public:
   SCSCL();
   SCSCL(u8 End);
   SCSCL(u8 End, u8 Level);
   virtual int WritePos(u8 ID, u16 Position, u16 Time,
-                       u16 Speed = 0); // 普通写单个舵机位置指令
-  virtual int
-  RegWritePos(u8 ID, u16 Position, u16 Time,
-              u16 Speed = 0); // 异步写单个舵机位置指令(RegWriteAction生效)
+                       u16 Speed = 0);  // 普通写单个舵机位置指令
+  virtual int RegWritePos(u8 ID, u16 Position, u16 Time,
+                          u16 Speed = 0);  // 异步写单个舵机位置指令(RegWriteAction生效)
   virtual void SyncWritePos(u8 ID[], u8 IDN, u16 Position[], u16 Time[],
-                            u16 Speed[]);  // 同步写多个舵机位置指令
-  virtual int PWMMode(u8 ID);              // PWM输出模式
-  virtual int WritePWM(u8 ID, s16 pwmOut); // PWM输出模式指令
-  virtual int EnableTorque(u8 ID, u8 Enable); // 扭矩控制指令
-  virtual int unLockEprom(u8 ID);             // eprom解锁
-  virtual int LockEprom(u8 ID);               // eprom加锁
-  virtual int FeedBack(int ID);               // 反馈舵机信息
-  virtual int ReadPos(int ID);                // 读位置
-  virtual int ReadSpeed(int ID);              // 读速度
-  virtual int ReadLoad(int ID); // 读输出至电机的电压百分比(0~1000)
-  virtual int ReadVoltage(int ID); // 读电压
-  virtual int ReadTemper(int ID);  // 读温度
-  virtual int ReadMove(int ID);    // 读移动状态
-  virtual int ReadCurrent(int ID); // 读电流
+                            u16 Speed[]);      // 同步写多个舵机位置指令
+  virtual int PWMMode(u8 ID);                  // PWM输出模式
+  virtual int WritePWM(u8 ID, s16 pwmOut);     // PWM输出模式指令
+  virtual int EnableTorque(u8 ID, u8 Enable);  // 扭矩控制指令
+  virtual int unLockEprom(u8 ID);              // eprom解锁
+  virtual int LockEprom(u8 ID);                // eprom加锁
+  virtual int FeedBack(int ID);                // 反馈舵机信息
+  virtual int ReadPos(int ID);                 // 读位置
+  virtual int ReadSpeed(int ID);               // 读速度
+  virtual int ReadLoad(int ID);                // 读输出至电机的电压百分比(0~1000)
+  virtual int ReadVoltage(int ID);             // 读电压
+  virtual int ReadTemper(int ID);              // 读温度
+  virtual int ReadMove(int ID);                // 读移动状态
+  virtual int ReadCurrent(int ID);             // 读电流
 private:
   u8 Mem[SCSCL_PRESENT_CURRENT_H - SCSCL_PRESENT_POSITION_L + 1];
 };
