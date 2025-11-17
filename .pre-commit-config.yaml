@@ -61,3 +61,10 @@ repos:
         language: system
         types: [xml]
         files: \.xml$
+  # -----------------------------
+  # 7. NoteBook Configure
+  # -----------------------------
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.6.0 # Use the latest release
+    hooks:
+      - id: nbstripout
