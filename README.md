@@ -1,9 +1,57 @@
+<div align="center">
+
+
+  <img src="docs/media/lang2pick.png" alt="logo" width="200" height="auto" />
+  <h1>lang2pick</h1>
+  
+  <p>
+    A language to action pipeline for so-101 manipulator 
+  </p>
+  
+  
+<!-- Badges -->
+<p>
+  <a href="https://github.com/shrujanus/lang2pick/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/shrujanus/lang2pick" alt="contributors" />
+  </a>
+  <a href="https://github.com/shrujanus/lang2pick/network/members">
+    <img src="https://img.shields.io/github/forks/shrujanus/lang2pick" alt="forks" />
+  </a>
+  <a href="https://github.com/shrujanus/lang2pick/stargazers">
+    <img src="https://img.shields.io/github/stars/shrujanus/lang2pick" alt="stars" />
+  </a>
+  <a href="https://github.com/shrujanus/lang2pick/issues/">
+    <img src="https://img.shields.io/github/issues/shrujanus/lang2pick" alt="open issues" />
+  </a>
+  <a href="https://github.com/shrujanus/lang2pick/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/shrujanus/lang2pick.svg" alt="license" />
+  </a>
+</p>
+
+   
+<h4>
+    <a href="https://github.com/shrujanus/lang2pick/tree/main/docs">View Demo</a>
+  <span> · </span>
+    <a href="https://github.com/shrujanus/lang2pick/tree/main/docs">Documentation</a>
+  <span> · </span>
+    <a href="https://github.com/shrujanus/lang2pick/issues">Report Bug</a>
+  <span> · </span>
+    <a href="https://github.com/shrujanus/lang2pick/issues">Request Feature</a>
+  </h4>
+</div>
+
+<br />
+
 ## 🌍 Inspiration
 
 Growing up in India, I often saw plastic bottles, cans, wrappers, and recyclables littering the streets. It always felt like a **solvable problem**, what if only technology could lend a hand (literally)
 
 This project was born from that simple idea:  
 > **What if a robotic arm could autonomously identify and pick up recyclables, cleaning our environment, one object at a time?**
+
+<div align="center">
+  <img src="docs/media/trash.png" alt="logo" width="200" height="auto" />
+</div>
 
 lang2pick is a step toward that: by using an **open-source arm (SO-101)**  we then combines **natural language understanding**, **vision-language-action modes**, and **motion planning** to enable real-world pick-and-place tasks
 
