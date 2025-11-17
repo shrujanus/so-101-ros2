@@ -4,8 +4,9 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <algorithm>
 
-#include "SMS_STS.h"
+#include "SCServo.h"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
 #include "hardware_interface/system_interface.hpp"
@@ -27,18 +28,21 @@ struct Servo
   Servo(int servo_id) : id(servo_id)
   {
   }
-  int id;
-  double position_offset;
+  int id{ 0 };
+  double position_offset{ 0.0 };  // homing_offset
+  int min_range{ 0 };
+  int max_range{ 0 };
+  double min_angle{ -6.28319 };
+  double max_angle{ 6.28319 };
 
-  double cmd_id;  // 0 = position, 1 = velocity
-  double cmd_position;
-  double cmd_velocity;
+  int cmd_id{ 0 };  // 0 = position, 1 = velocity
+  double cmd_position{ 0 };
 
-  double position_state;
-  double velocity_state;
-  double torque_state;
-  double temperature_state;
-  double voltage_state;
+  double position_state{ 0.0 };
+  double velocity_state{ 0.0 };
+  double torque_state{ 0.0 };
+  double temperature_state{ 0.0 };
+  double voltage_state{ 0.0 };
 };
 
 class so101_hardware_interface final : public hardware_interface::SystemInterface
@@ -48,9 +52,12 @@ private:
   std::string usb_port_ = "/dev/ttyUSB0";
   std::vector<Servo> servos_;
   int baud_rate_ = 115200;
-  int num_joints_ = 0;
+  int num_joints_ = 6;
   int steps_per_rev_ = 4096;
   CallbackReturn update_hardware_status(int i);
+  int control_mode_ = 1;  // 0=Servo, 1=Closed_loop, 2=Open_loop
+  double ticks_to_rad_(double ticks, int servo_index);
+  int rad_to_ticks_(double rad, int servo_index);
 
 public:
   so101_hardware_interface();

@@ -11,6 +11,8 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
   {
     return hardware_interface::CallbackReturn::ERROR;
   }
+
+  // Finding usb_port and baud_rate from hardware parameters
   auto it = params.hardware_parameters.find("usb_port");
   if (it == params.hardware_parameters.end())
   {
@@ -30,6 +32,14 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
   RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "Initializing hardware interface for %d joints.",
               num_joints_);
 
+  auto control_mode_it = params.hardware_parameters.find("control_mode");
+  if (control_mode_it == params.hardware_parameters.end())
+  {
+    RCLCPP_FATAL(rclcpp::get_logger("so101_hardware_interface"), "Control mode not specified in hardware parameters.");
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+  control_mode_ = std::stoi(control_mode_it->second);
+
   num_joints_ = params.joints.size();
   std::unordered_set<std::string> joint_names, state_interface_names, command_interface_names;
 
@@ -42,19 +52,19 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
       return hardware_interface::CallbackReturn::ERROR;
     }
 
-    if (params.joints[i].state_interfaces.size() != 5)
+    // Configuring State Interfaces
+    if (params.joints[i].state_interfaces.size() < 3)
     {
       RCLCPP_FATAL(rclcpp::get_logger("so101_hardware_interface"), "Joint %s does not have 5 state interfaces.",
                    params.joints[i].name.c_str());
       return hardware_interface::CallbackReturn::ERROR;
     }
     state_interface_names.clear();
-
     for (const auto& state_interface : params.joints[i].state_interfaces)
     {
       if (state_interface_names.find(state_interface.name) != state_interface_names.end() ||
           (state_interface.name != "position" && state_interface.name != "velocity" &&
-           state_interface.name != "torque" && state_interface.name != "temperature" &&
+           state_interface.name != "effort" && state_interface.name != "temperature" &&
            state_interface.name != "voltage"))
       {
         RCLCPP_FATAL(rclcpp::get_logger("so101_hardware_interface"),
@@ -66,7 +76,8 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
       state_interface_names.insert(state_interface.name);
     }
 
-    if (params.joints[i].command_interfaces.size() != 2)
+    // Configuring Command Interfaces
+    if (params.joints[i].command_interfaces.size() < 1)
     {
       RCLCPP_FATAL(rclcpp::get_logger("so101_hardware_interface"), "Joint %s does not have 2 command interfaces.",
                    params.joints[i].name.c_str());
@@ -83,6 +94,8 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
       }
       command_interface_names.insert(command_interface.name);
     }
+
+    // Configuring Servo Parameters
     auto id_it = params.joints[i].parameters.find("id");
     if (id_it == params.joints[i].parameters.end())
     {
@@ -92,12 +105,37 @@ so101_control::so101_hardware_interface::on_init(const hardware_interface::Hardw
     }
     int id = std::stoi(params.joints[i].parameters.at("id"));
     servos_[i] = so101_control::Servo(id);
+
     auto offset_it = params.joints[i].parameters.find("position_offset");
     if (offset_it != params.joints[i].parameters.end())
     {
       servos_[i].position_offset = std::stod(offset_it->second);
     }
     servos_[i].cmd_id = params.joints[i].parameters.at("type") == "position" ? 0.0 : 1.0;
+
+    auto min_range_it = params.joints[i].parameters.find("min_range");
+    if (min_range_it != params.joints[i].parameters.end())
+    {
+      servos_[i].min_range = std::stoi(min_range_it->second);
+    }
+
+    auto max_range_it = params.joints[i].parameters.find("max_range");
+    if (max_range_it != params.joints[i].parameters.end())
+    {
+      servos_[i].max_range = std::stoi(max_range_it->second);
+    }
+
+    auto min_angle_it = params.joints[i].parameters.find("min_angle");
+    if (min_angle_it != params.joints[i].parameters.end())
+    {
+      servos_[i].min_angle = std::stod(min_angle_it->second);
+    }
+
+    auto max_angle_it = params.joints[i].parameters.find("max_angle");
+    if (max_angle_it != params.joints[i].parameters.end())
+    {
+      servos_[i].max_angle = std::stod(max_angle_it->second);
+    }
   }
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -128,8 +166,29 @@ so101_control::so101_hardware_interface::on_configure(const rclcpp_lifecycle::St
   // setting up each servo
   for (int i = 0; i < num_joints_; ++i)
   {
-    motor_driver_.Mode(servos_[i].id, 0);  // position control mode
+    motor_driver_.Mode(servos_[i].id, control_mode_);  // 0=Servo, 1=Closed_loop, 2=Open_loop
+    motor_driver_.EnableTorque(servos_[i].id, 1);
   }
+  RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "Set to control mode %d", control_mode_);
+  return hardware_interface::CallbackReturn::SUCCESS;
+}
+
+hardware_interface::CallbackReturn
+so101_control::so101_hardware_interface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
+{
+  RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "Activating hardware interface for %d joints.",
+              num_joints_);
+
+  for (int i = 0; i < num_joints_; i++)
+  {
+    auto servo = servos_[i];
+    int id = servos_[i].id;
+
+    RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"),
+                "ID: %d, min_range: %d, max_range: %d, min_angle: %f, max_angle: %f", id, servo.min_range,
+                servo.max_range, servo.min_angle, servo.max_angle);
+  }
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -142,49 +201,15 @@ so101_control::so101_hardware_interface::on_cleanup(const rclcpp_lifecycle::Stat
 }
 
 hardware_interface::CallbackReturn
-so101_control::so101_hardware_interface::on_activate(const rclcpp_lifecycle::State& /*previous_state*/)
-{
-  RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "Activating hardware interface for %d joints.",
-              num_joints_);
-
-  for (int i = 0; i < num_joints_; ++i)
-  {
-    double initial_pose = servos_[i].position_state;
-    servos_[i].cmd_position = initial_pose;
-    servos_[i].cmd_velocity = 0.0;
-  }
-
-  return hardware_interface::CallbackReturn::SUCCESS;
-}
-
-hardware_interface::CallbackReturn so101_control::so101_hardware_interface::update_hardware_status(int id)
-{
-  if (motor_driver_.FeedBack(id) == -1)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger("so101_hardware_interface"), "Failed to get feedback from motor ID %d.", id);
-    return hardware_interface::CallbackReturn::ERROR;
-  }
-  else
-  {
-    servos_[id - 1].position_state = motor_driver_.ReadPos(id) * 2 * M_PI / steps_per_rev_;
-    servos_[id - 1].velocity_state = motor_driver_.ReadSpeed(id) * 2 * M_PI / steps_per_rev_;
-    servos_[id - 1].torque_state = motor_driver_.ReadLoad(id);
-    servos_[id - 1].voltage_state = motor_driver_.ReadVoltage(id);
-    servos_[id - 1].temperature_state = motor_driver_.ReadTemper(id);
-  }
-  return hardware_interface::CallbackReturn::SUCCESS;
-}
-
-hardware_interface::CallbackReturn
 so101_control::so101_hardware_interface::on_deactivate(const rclcpp_lifecycle::State& /*previous_state*/)
 {
   RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "Deactivating hardware interface for %d joints.",
               num_joints_);
   for (int i = 0; i < num_joints_; ++i)
   {
-    motor_driver_.EnableTorque(i + 1, 0);
+    motor_driver_.EnableTorque(servos_[i].id, 1);
   }
-  this->write(rclcpp::Time(), rclcpp::Duration(0, 0));
+  // this->write(rclcpp::Time(), rclcpp::Duration(0, 0));
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -211,11 +236,11 @@ std::vector<hardware_interface::StateInterface> so101_control::so101_hardware_in
     state_interfaces.emplace_back(
         hardware_interface::StateInterface(info_.joints[i].name, "velocity", &servos_[i].velocity_state));
     state_interfaces.emplace_back(
-        hardware_interface::StateInterface(info_.joints[i].name, "torque", &servos_[i].torque_state));
-    state_interfaces.emplace_back(
-        hardware_interface::StateInterface(info_.joints[i].name, "temperature", &servos_[i].temperature_state));
-    state_interfaces.emplace_back(
-        hardware_interface::StateInterface(info_.joints[i].name, "voltage", &servos_[i].voltage_state));
+        hardware_interface::StateInterface(info_.joints[i].name, "effort", &servos_[i].torque_state));
+    // state_interfaces.emplace_back(
+    //     hardware_interface::StateInterface(info_.joints[i].name, "temperature", &servos_[i].temperature_state));
+    // state_interfaces.emplace_back(
+    //     hardware_interface::StateInterface(info_.joints[i].name, "voltage", &servos_[i].voltage_state));
   }
   return state_interfaces;
 }
@@ -227,8 +252,6 @@ std::vector<hardware_interface::CommandInterface> so101_control::so101_hardware_
   {
     command_interfaces.emplace_back(
         hardware_interface::CommandInterface(info_.joints[i].name, "position", &servos_[i].cmd_position));
-    command_interfaces.emplace_back(
-        hardware_interface::CommandInterface(info_.joints[i].name, "velocity", &servos_[i].cmd_velocity));
   }
   return command_interfaces;
 }
@@ -236,7 +259,7 @@ std::vector<hardware_interface::CommandInterface> so101_control::so101_hardware_
 hardware_interface::return_type so101_control::so101_hardware_interface::read(const rclcpp::Time& /*time*/,
                                                                               const rclcpp::Duration& /*period*/)
 {
-  for (int i = 1; i <= num_joints_; ++i)
+  for (int i = 0; i < num_joints_; ++i)
   {
     if (update_hardware_status(i) == hardware_interface::CallbackReturn::ERROR)
     {
@@ -251,14 +274,66 @@ hardware_interface::return_type so101_control::so101_hardware_interface::read(co
 hardware_interface::return_type so101_control::so101_hardware_interface::write(const rclcpp::Time& /*time*/,
                                                                                const rclcpp::Duration& /*period*/)
 {
+  u8 ids[num_joints_];
+  s16 position[num_joints_];
+  u16 speed[num_joints_];
+  u8 acceleration[num_joints_];
   for (int i = 0; i < num_joints_; ++i)
   {
     int id = servos_[i].id;
-    s16 position = static_cast<s16>(servos_[i].cmd_position);
-    s16 speed = static_cast<s16>(servos_[i].cmd_velocity);
-    motor_driver_.WritePosEx(id, position, speed, 0);
+    ids[i] = static_cast<u8>(id);
+    position[i] = rad_to_ticks_(servos_[i].cmd_position, i);
+    speed[i] = 4500;
+    acceleration[i] = 255;
   }
+  motor_driver_.SyncWritePosEx(ids, num_joints_, position, speed, acceleration);
   return hardware_interface::return_type::OK;
+}
+
+hardware_interface::CallbackReturn so101_control::so101_hardware_interface::update_hardware_status(int index)
+
+{
+  int id = servos_[index].id;
+
+  int raw_pos = motor_driver_.ReadPos(id);
+  int raw_vel = motor_driver_.ReadSpeed(id);
+
+  servos_[index].position_state = ticks_to_rad_(raw_pos, index);
+
+  servos_[index].velocity_state = ticks_to_rad_(raw_vel, index);
+
+  servos_[index].torque_state = motor_driver_.ReadLoad(id);
+  servos_[index].voltage_state = motor_driver_.ReadVoltage(id);
+  servos_[index].temperature_state = motor_driver_.ReadTemper(id);
+
+  // RCLCPP_INFO(rclcpp::get_logger("so101_hardware_interface"), "ID: 6 raw_pos: %d, joint_pos: %f",
+  //             motor_driver_.ReadPos(6),servos_[5].position_state);
+
+  return hardware_interface::CallbackReturn::SUCCESS;
+}
+
+double so101_control::so101_hardware_interface::ticks_to_rad_(double ticks, int servo_index)
+{
+  const auto& servo = servos_[servo_index];
+  int zeroed = static_cast<int>(ticks);
+
+  if (zeroed < servo.min_range)
+    zeroed = servo.min_range;
+  if (zeroed > servo.max_range)
+    zeroed = servo.max_range;
+
+  double ratio = static_cast<double>(zeroed - servo.min_range) / (servo.max_range - servo.min_range);
+  return servo.min_angle + ratio * (servo.max_angle - servo.min_angle);
+}
+
+int so101_control::so101_hardware_interface::rad_to_ticks_(double rad, int servo_index)
+{
+  const auto& servo = servos_[servo_index];
+  // double cmd = std::clamp(rad,servo.min_angle,servo.max_angle);
+
+  double ratio = (rad - servo.min_angle) / (servo.max_angle - servo.min_angle);
+
+  return static_cast<int>(servo.min_range + ratio * (servo.max_range - servo.min_range));
 }
 
 PLUGINLIB_EXPORT_CLASS(so101_control::so101_hardware_interface, hardware_interface::SystemInterface)
