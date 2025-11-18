@@ -103,6 +103,20 @@ graph TD
 
 ```
 
+## 📝 To-Do List
+
+
+- [x] Hardware interface for SO101 arm
+- [x] Connect with MoveIt 2 planner ![Video](docs/media/vid1.mp4)
+- [ ] Write a modular Python framework for VLM object detection
+- [ ] Implement a gRPC server to send perception commands to the robot
+- [ ] Create a ROS 2 ↔ gRPC bridge
+- [ ] Stream the world-frame video using WebRTC
+- [ ] Build front-end to interact with VLM and display current picking status
+- [ ] Automate deployment to the cloud
+
+
+
 ## Project Structure
 
 | Directory | Description |

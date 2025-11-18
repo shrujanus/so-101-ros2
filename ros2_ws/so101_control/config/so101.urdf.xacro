@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="so101">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="so101_robot">
   <xacro:arg name="use_mock_hardware" default="false" />
 
   <xacro:include filename="$(find so101_description)/urdf/so101_description.urdf.xacro" />
