@@ -107,7 +107,10 @@ graph TD
 
 
 - [x] Hardware interface for SO101 arm
-- [x] Connect with MoveIt 2 planner ![Video](docs/media/vid1.mp4)
+- [x] Connect with MoveIt 2 planner 
+  <div align="center">
+    <img src="docs/media/vid1.gif" alt="logo" width="200" height="auto" />
+  </div>
 - [ ] Write a modular Python framework for VLM object detection
 - [ ] Implement a gRPC server to send perception commands to the robot
 - [ ] Create a ROS 2 ↔ gRPC bridge
