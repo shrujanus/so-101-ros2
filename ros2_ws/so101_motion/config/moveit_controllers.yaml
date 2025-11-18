@@ -9,6 +9,7 @@ moveit_simple_controller_manager:
 
   so101_arm_controller:
     type: FollowJointTrajectory
+    action_ns: follow_joint_trajectory
     joints:
       - shoulder_pan
       - shoulder_lift
