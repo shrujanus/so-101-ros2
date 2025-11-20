@@ -49,7 +49,7 @@ RUN mkdir -p /root/dev_ws/src/
 RUN ln -s /root/repo/ros2_ws/ /root/dev_ws/src/
 
 RUN mkdir -p /root/ml_ws/
-RUN ln -s /root/repo/vlm/ /root/ml_ws/
+RUN ln -s /root/repo/vla/ /root/ml_ws/
 
 # ----------------------------
 # Environment variables
